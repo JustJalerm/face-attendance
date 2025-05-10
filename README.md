@@ -27,5 +27,5 @@ A Django-based web application that uses facial recognition for student attendan
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/yourusername/face-attendance.git
+git clone https://github.com/justjalerm/face-attendance.git
 cd face-attendance
