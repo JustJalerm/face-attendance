@@ -12,6 +12,13 @@
 
     <a href="#" class="btn btn-success mt-3">Start Attendance</a>
     <a href="#" class="btn btn-secondary mt-3">Upload Student Images</a>
+
+    <!-- Logout button -->
+    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger mt-3">Logout</button>
+    </form>
+    
 </div>
 </body>
 </html>
