@@ -1,21 +1,13 @@
-# accounts/forms.py
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser
 
-class CustomUserCreationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, label="Password")
-    password_confirm = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
-    
+class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password', 'password_confirm', 'is_teacher', 'is_student']
-    
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        password_confirm = cleaned_data.get('password_confirm')
+        fields = ('username', 'email', 'first_name', 'last_name')
         
-        if password != password_confirm:
-            raise forms.ValidationError("Passwords do not match.")
-        
-        return cleaned_data
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
