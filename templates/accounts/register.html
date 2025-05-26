@@ -1,25 +1,77 @@
-<!-- templates/accounts/register.html -->
 {% load crispy_forms_tags %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #roleModal {
+            display: block;
+            background-color: rgba(0,0,0,0.5);
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 9999;
+        }
+        .modal-content {
+            margin: 20% auto;
+            padding: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-<div class="container mt-5">
+
+<!-- Role selection popup -->
+<div id="roleModal">
+    <div class="modal-content">
+        <h5>Register as:</h5>
+        <button class="btn btn-primary mb-2" onclick="chooseRole('student')">Student</button><br>
+        <button class="btn btn-secondary" onclick="chooseRole('teacher')">Teacher</button>
+    </div>
+</div>
+
+<!-- Registration Form -->
+<div class="container mt-5" style="display: none;" id="registerFormContainer">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <h2>Register</h2>
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form|crispy }}
+
+                <!-- Hidden role field -->
+                <input type="hidden" name="role" id="userRole" value="">
+
+                <!-- Student photo upload -->
+                <div class="form-group" id="studentPhotoDiv" style="display: none;">
+                    <label for="photo">Upload Face Photo</label>
+                    <input type="file" name="photo" id="photo" accept="image/*" class="form-control-file">
+                </div>
+
                 <button type="submit" class="btn btn-primary">Register</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    function chooseRole(role) {
+        document.getElementById('roleModal').style.display = 'none';
+        document.getElementById('registerFormContainer').style.display = 'block';
+        document.getElementById('userRole').value = role;
+
+        if (role === 'student') {
+            document.getElementById('studentPhotoDiv').style.display = 'block';
+        } else {
+            document.getElementById('studentPhotoDiv').style.display = 'none';
+        }
+    }
+</script>
+
 </body>
 </html>
