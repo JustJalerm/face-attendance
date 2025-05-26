@@ -1,0 +1,17 @@
+{% extends 'base_sidebar.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h3>👤 My Profile</h3>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Username (readonly)</label>
+            <input type="text" class="form-control" value="{{ request.user.username }}" readonly>
+        </div>
+        {{ user_form.as_p }}
+        {{ profile_form.as_p }}
+        <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+    </form>
+</div>
+{% endblock %}

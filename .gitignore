@@ -10,6 +10,8 @@ staticfiles/
 venv/
 myenv/
 *.log
+cleanenv/
+
 
 # VSCode or IDE settings
 .vscode/

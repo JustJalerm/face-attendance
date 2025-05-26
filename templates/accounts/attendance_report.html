@@ -1,0 +1,25 @@
+{% extends 'base_sidebar.html' %}
+{% block page_content %}
+<h3 class="mb-3">📊 Attendance Report</h3>
+
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Student</th>
+            <th>Class</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+            <tr>
+                <td>{{ record.student.user.username }}</td>
+                <td>{{ record.classroom.name }}</td>
+                <td>{{ record.timestamp }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="3" class="text-center">No attendance records yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
