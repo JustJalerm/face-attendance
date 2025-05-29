@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Classroom
 from .forms import ClassroomForm
+from django.utils import timezone
+from attendance.models import Classroom, AttendanceRecord
 import random
 import string
 import subprocess
@@ -100,3 +102,35 @@ def take_attendance(request, classroom_id):
 
     messages.success(request, "✅ Attendance script executed.")
     return redirect('list_classrooms')
+
+@login_required
+def attendance_tracking_view(request):
+    if not request.user.is_teacher:
+        return redirect('student_dashboard')
+
+    classrooms = Classroom.objects.filter(teacher=request.user)
+    selected_class_id = request.GET.get('classroom')
+    selected_date = request.GET.get('date') or timezone.now().date().isoformat()
+
+    selected_class = None
+    records = []
+    summary = {'Present': 0, 'Absent': 0, 'Late': 0}
+
+    if selected_class_id:
+        selected_class = get_object_or_404(Classroom, id=selected_class_id, teacher=request.user)
+        records = AttendanceRecord.objects.filter(
+            classroom=selected_class,
+            timestamp__date=selected_date
+
+        ).select_related('student')
+
+        for rec in records:
+            summary[rec.status] += 1
+
+    return render(request, 'classroom/attendance_tracking.html', {
+        'classrooms': classrooms,
+        'selected_class': selected_class,
+        'records': records,
+        'selected_date': selected_date,
+        'summary': summary,
+    })

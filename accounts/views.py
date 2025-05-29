@@ -13,13 +13,14 @@ def home_redirect(request):
     return redirect('login')
 
 
-def redirect_based_on_role(request):
-    user = request.user
-    if user.is_authenticated and user.is_teacher:
+def redirect_based_on_role(user):
+    if user.is_teacher:
         return redirect('teacher_dashboard')
-    elif user.is_authenticated and user.is_student:
+    elif user.is_student:
         return redirect('student_dashboard')
-    return redirect('login')
+    else:
+        return redirect('home')  # or some fallback
+
 
 
 def register(request):
@@ -71,7 +72,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             messages.success(request, f'Welcome back, {user.username}!')
-            return redirect_based_on_role(request)
+            return redirect_based_on_role(user)
         else:
             messages.error(request, 'Invalid username or password')
 
@@ -158,13 +159,28 @@ def attendance_report(request):
     if request.user.is_student:
         records = AttendanceRecord.objects.filter(
             student=request.user.student_profile
-        ).order_by('-date')
+        ).order_by('-timestamp')
     elif request.user.is_teacher:
         records = AttendanceRecord.objects.filter(
             classroom__teacher=request.user
-        ).order_by('-date')
+        ).order_by('-timestamp')
     else:
         records = []
 
     return render(request, 'accounts/attendance_report.html', {'records': records})
+
+from django.views.decorators.http import require_POST
+
+@require_POST
+@login_required
+def request_permission(request, record_id):
+    try:
+        record = AttendanceRecord.objects.get(id=record_id, student=request.user.student_profile)
+        record.status = 'R'  # R for Requested
+        record.save()
+        messages.success(request, "Permission request sent.")
+    except AttendanceRecord.DoesNotExist:
+        messages.error(request, "Record not found.")
+    return redirect('attendance_report')
+
 
