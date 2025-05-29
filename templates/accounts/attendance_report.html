@@ -1,25 +1,89 @@
-{% extends 'base_sidebar.html' %}
-{% block page_content %}
+{% extends 'base_student.html' %}
+{% block content %}
+
 <h3 class="mb-3">📊 Attendance Report</h3>
+
+<!-- Class Filter -->
+<form method="GET" class="form-inline mb-3">
+    <label for="classroom" class="mr-2">Filter by Class:</label>
+    <select name="classroom" id="classroom" class="form-control mr-2" onchange="this.form.submit()">
+        <option value="">All Classes</option>
+        {% for class in classrooms %}
+            <option value="{{ class.id }}" {% if class.id|stringformat:"s" == request.GET.classroom %}selected{% endif %}>
+                {{ class.name }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
 
 <table class="table table-striped table-bordered">
     <thead class="thead-dark">
         <tr>
-            <th>Student</th>
             <th>Class</th>
-            <th>Timestamp</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
         {% for record in records %}
-            <tr>
-                <td>{{ record.student.user.username }}</td>
-                <td>{{ record.classroom.name }}</td>
-                <td>{{ record.timestamp }}</td>
-            </tr>
-        {% empty %}
-            <tr><td colspan="3" class="text-center">No attendance records yet.</td></tr>
+        <tr>
+            <td>{{ record.classroom.name }}</td>
+            <td>{{ record.timestamp|date:"Y-m-d h:i A" }}</td>
+            <td>
+                {% if record.status == 'Present' %}
+                    <span class="badge badge-success">Present</span>
+                {% elif record.status == 'Absent' %}
+                    <span class="badge badge-danger">Absent</span>
+                {% elif record.status == 'Late' %}
+                    <span class="badge badge-warning">Late</span>
+                {% elif record.status == 'Permission' %}
+                    <span class="badge badge-secondary">Requested</span>
+                {% else %}
+                    <span class="badge badge-light">Unknown</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if record.status == 'Absent' %}
+                <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modal{{ record.id }}">
+                    Request
+                </button>
+                {% endif %}
+            </td>
+        </tr>
+
+        <!-- Permission Modal -->
+        <div class="modal fade" id="modal{{ record.id }}" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <form method="POST" action="{% url 'request_permission' record.id %}">
+                    {% csrf_token %}
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Request Permission</h5>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Request permission for missing <strong>{{ record.classroom.name }}</strong> on <strong>{{ record.timestamp|date:"Y-m-d" }}</strong>?</p>
+                            <div class="form-group mt-3">
+                                <label for="reason{{ record.id }}">Reason</label>
+                                <textarea class="form-control" name="reason" id="reason{{ record.id }}" rows="3" placeholder="Enter your reason..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-warning">Submit Request</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         {% endfor %}
     </tbody>
 </table>
+
+<!-- Bootstrap JS & jQuery (if not already loaded in base_student.html) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 {% endblock %}

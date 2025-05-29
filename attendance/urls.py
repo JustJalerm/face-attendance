@@ -9,6 +9,8 @@ urlpatterns = [
     path('', home_redirect, name='home'),  # Redirect root URL to login page
     path('accounts/', include('accounts.urls')),
     path('classroom/', include('classroom.urls')),
+    path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')),
 
     
 ]
