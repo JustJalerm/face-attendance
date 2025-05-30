@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-your-secret-key-here'  # Change this for production
 DEBUG = False
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['snapreg.xyz', 'www.snapreg.xyz']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -108,11 +108,11 @@ CSRF_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# ✅ CSRF fix for Railway
+# ✅ CSRF trusted origins
 CSRF_TRUSTED_ORIGINS = [
-    'https://face-attendance-production.up.railway.app',
+    'https://snapreg.xyz',
+    'https://www.snapreg.xyz',
 ]
-
 
 LOGGING = {
     'version': 1,
