@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: face-attendance
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn attendance.wsgi
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: attendance.settings
+      - key: SECRET_KEY
+        value: your-production-secret-key
+      - key: DEBUG
+        value: False
