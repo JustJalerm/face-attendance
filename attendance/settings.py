@@ -3,8 +3,10 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-your-secret-key-here'  # Change this for production
+SECRET_KEY = 'django-insecure-your-secret-key-here'  # Replace this with a secure one in production
+
 DEBUG = False
+
 ALLOWED_HOSTS = ['snapreg.xyz', 'www.snapreg.xyz']
 
 INSTALLED_APPS = [
@@ -84,7 +86,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For production
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -114,22 +116,31 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.snapreg.xyz',
 ]
 
+# ✅ Logging to file for error debugging
 LOGGING = {
     'version': 1,
+    'disable_existing_loggers': False,
     'handlers': {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
         },
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'error.log',
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'INFO',
+            'propagate': True,
         },
         'accounts': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'DEBUG',
+            'propagate': True,
         },
     },
 }
