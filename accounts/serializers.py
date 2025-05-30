@@ -19,10 +19,17 @@ class ClassroomSerializer(serializers.ModelSerializer):
         model = Classroom
         fields = ['id', 'name', 'code', 'scheduled_time']
 
+# For GET (Display)
 class AttendanceRecordSerializer(serializers.ModelSerializer):
     student = StudentProfileSerializer()
     classroom = ClassroomSerializer()
-    
+
     class Meta:
         model = AttendanceRecord
         fields = ['id', 'student', 'classroom', 'status', 'timestamp']
+
+# For POST (Submission)
+class AttendanceRecordCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AttendanceRecord
+        fields = '__all__'

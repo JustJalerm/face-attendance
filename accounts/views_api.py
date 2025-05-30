@@ -13,6 +13,7 @@ from .serializers import (
 from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication
+from django.utils import timezone
 
 class ClassroomListAPI(APIView):
     def get(self, request):
@@ -70,4 +71,31 @@ class AttendanceRecordViewSet(viewsets.ModelViewSet):
     queryset = AttendanceRecord.objects.all()
     serializer_class = AttendanceRecordSerializer
     permission_classes = [IsAuthenticated]
+
+class SubmitAttendanceAPI(APIView):
+    def post(self, request):
+        student_id = request.data.get("student_id")
+        classroom_id = request.data.get("classroom_id")
+        status_value = request.data.get("status", "Present")  # Default to Present
+
+        if not student_id or not classroom_id:
+            return Response({"error": "Missing student_id or classroom_id"}, status=400)
+
+        try:
+            student = StudentProfile.objects.get(id=student_id)
+            classroom = Classroom.objects.get(id=classroom_id)
+
+            AttendanceRecord.objects.create(
+                student=student,
+                classroom=classroom,
+                timestamp=timezone.now(),
+                status=status_value
+            )
+
+            return Response({"message": "✅ Attendance logged"}, status=201)
+
+        except StudentProfile.DoesNotExist:
+            return Response({"error": "Student not found"}, status=404)
+        except Classroom.DoesNotExist:
+            return Response({"error": "Classroom not found"}, status=404)
 
