@@ -109,7 +109,10 @@ SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # ✅ CSRF fix for Railway
-CSRF_TRUSTED_ORIGINS = ['https://face-attendance-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = [
+    'https://face-attendance-production.up.railway.app',
+]
+
 
 LOGGING = {
     'version': 1,
