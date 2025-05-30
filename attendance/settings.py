@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings
 SECRET_KEY = 'django-insecure-your-secret-key-here'  # Change for production
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['*']  # Adjust for production
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -103,7 +104,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # For production
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+ # For production
 
 # Media files (Uploaded photos)
 MEDIA_URL = '/media/'
@@ -120,6 +122,9 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 LOGIN_REDIRECT_URL = 'dashboard/'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'login'
+
+#whitenoise config
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Email settings (development)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
